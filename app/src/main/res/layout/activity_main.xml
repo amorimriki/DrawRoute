@@ -3,36 +3,79 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="20dp"
+    android:background="#F9F9F9">
 
+    <!-- Título -->
+    <TextView
+        android:id="@+id/welcomeText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Welcome Back!"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textColor="#333333"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Campo para E-mail -->
     <EditText
         android:id="@+id/emailInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Email" />
+        android:hint="Enter your email"
+        android:inputType="textEmailAddress"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/edittext_background"
+        android:padding="14dp"
+        android:textColor="#333333"
+        android:textSize="16sp" />
 
+    <!-- Campo para Senha -->
     <EditText
         android:id="@+id/passwordInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Password"
-        android:inputType="textPassword" />
+        android:hint="Enter your password"
+        android:inputType="textPassword"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/edittext_background"
+        android:padding="14dp"
+        android:textColor="#333333"
+        android:textSize="16sp" />
 
-    <Button
-        android:id="@+id/registerButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Register" />
-
+    <!-- Botão de Login -->
     <Button
         android:id="@+id/loginButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Login" />
+        android:text="Login"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:background="@color/black"
+        android:layout_marginBottom="12dp"
+        android:padding="12dp" />
 
+    <!-- Botão de Registro -->
+    <Button
+        android:id="@+id/registerButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Create Account"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:background="@color/black"
+        android:layout_marginBottom="12dp"
+        android:padding="12dp" />
+
+    <!-- Botão de Logout -->
     <Button
         android:id="@+id/logoutButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Logout" />
+        android:text="Logout"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:background="@color/black"
+        android:padding="12dp" />
 </LinearLayout>
