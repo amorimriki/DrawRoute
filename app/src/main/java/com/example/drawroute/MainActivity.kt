@@ -19,29 +19,24 @@ class MainActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
-        // Check if user is already logged in
         val currentUser = auth.currentUser
         if (currentUser != null) {
-            // Redirect to LoggedInActivity if user is logged in
             val intent = Intent(this, LoggedInActivity::class.java)
             startActivity(intent)
             finish()
         }
 
-        // UI references
         val emailInput = findViewById<EditText>(R.id.emailInput)
         val passwordInput = findViewById<EditText>(R.id.passwordInput)
         val registerButton = findViewById<Button>(R.id.registerButton)
         val loginButton = findViewById<Button>(R.id.loginButton)
 
-        // Register button functionality
         registerButton.setOnClickListener {
             val email = emailInput.text.toString()
             val password = passwordInput.text.toString()
             registerUser(email, password)
         }
 
-        // Login button functionality
         loginButton.setOnClickListener {
             val email = emailInput.text.toString()
             val password = passwordInput.text.toString()
@@ -77,7 +72,6 @@ class MainActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // Redirect to LoggedInActivity
                     val intent = Intent(this, LoggedInActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
