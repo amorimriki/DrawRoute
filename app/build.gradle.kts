@@ -37,6 +37,8 @@ android {
 }
 
 dependencies {
+    implementation(platform("com.google.android.gms:play-services-maps:18.1.0"))
+    implementation(platform("com.google.android.gms:play-services-location:21.0.1"))
     implementation(platform("com.google.firebase:firebase-bom:33.6.0"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
