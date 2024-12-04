@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">DrawRoute</string>
+    <string name="title_activity_logged_in">LoggedInActivity</string>
 </resources>

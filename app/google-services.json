@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "718136961757",
+    "project_id": "drawr-840b8",
+    "storage_bucket": "drawr-840b8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:718136961757:android:1562b5f4f72b025dd4c934",
+        "android_client_info": {
+          "package_name": "com.example.drawroute"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDIladSiOPAg-GWPFdBD_Nr2zwPomxsyqk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
