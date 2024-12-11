@@ -21,7 +21,6 @@ class LoggedInActivity : AppCompatActivity() {
         val welcomeText = findViewById<TextView>(R.id.welcomeText)
         val logoutButton = findViewById<Button>(R.id.logoutButton)
 
-        // Display user's email
         val user = auth.currentUser
         welcomeText.text = "Welcome, ${user?.email}!"
 

@@ -3,6 +3,7 @@ package com.example.drawroute
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.util.Patterns
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -32,21 +33,30 @@ class MainActivity : AppCompatActivity() {
         val loginButton = findViewById<Button>(R.id.loginButton)
 
         registerButton.setOnClickListener {
-            val email = emailInput.text.toString()
-            val password = passwordInput.text.toString()
+            val email = emailInput.text.toString().trim()
+            val password = passwordInput.text.toString().trim()
             registerUser(email, password)
         }
 
         loginButton.setOnClickListener {
-            val email = emailInput.text.toString()
-            val password = passwordInput.text.toString()
+            val email = emailInput.text.toString().trim()
+            val password = passwordInput.text.toString().trim()
             loginUser(email, password)
         }
     }
 
     private fun registerUser(email: String, password: String) {
-        if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Email and password must not be empty", Toast.LENGTH_SHORT).show()
+        if (!isValidEmail(email)) {
+            Toast.makeText(this, "Invalid email format", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (!isValidPassword(password)) {
+            Toast.makeText(
+                this,
+                "Password must be at least 6 characters and include letters, numbers, and special characters",
+                Toast.LENGTH_LONG
+            ).show()
             return
         }
 
@@ -64,8 +74,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loginUser(email: String, password: String) {
-        if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Email and password must not be empty", Toast.LENGTH_SHORT).show()
+        if (!isValidEmail(email)) {
+            Toast.makeText(this, "Invalid email format", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (password.isEmpty()) {
+            Toast.makeText(this, "Password must not be empty", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -81,5 +96,15 @@ class MainActivity : AppCompatActivity() {
                     Log.e("AuthTest", "Login error: ${task.exception}")
                 }
             }
+    }
+
+    private fun isValidEmail(email: String): Boolean {
+        return email.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
+
+    private fun isValidPassword(password: String): Boolean {
+        // Senha deve ter pelo menos 6 caracteres, uma letra, um número e um caracter especial
+        val passwordRegex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@\$!%*?&])[A-Za-z\\d@\$!%*?&]{6,}$".toRegex()
+        return password.isNotEmpty() && password.matches(passwordRegex)
     }
 }
