@@ -103,7 +103,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun isValidPassword(password: String): Boolean {
-        // Senha deve ter pelo menos 6 caracteres, uma letra, um número e um caracter especial lalalala
+        // Senha deve ter pelo menos 6 caracteres, uma letra, um número e um caracter especial
         val passwordRegex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@\$!%*?&])[A-Za-z\\d@\$!%*?&]{6,}$".toRegex()
         return password.isNotEmpty() && password.matches(passwordRegex)
     }
