@@ -4,7 +4,7 @@
 
     <meta-data
         android:name="com.google.android.geo.API_KEY"
-        android:value="SUA_API_KEY_AQUI" />
+        android:value="AIzaSyDw3vD8XHpR1u2CzKYOy_yBzZlx5ax64jQ" />
 
     <application
         android:allowBackup="true"
@@ -14,23 +14,25 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.DrawRoute"
-        tools:targetApi="31">
+        android:theme="@style/Theme.DrawRoute">
+
         <activity
             android:name=".MapView"
             android:exported="false" />
+
         <activity
             android:name=".ui.theme.MapView"
             android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".LoggedInActivity"
             android:exported="true" />
