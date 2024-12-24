@@ -10,9 +10,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.drawroute.LoggedInActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
+    private lateinit var databaseReference: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,5 +110,11 @@ class MainActivity : AppCompatActivity() {
         // Senha deve ter pelo menos 6 caracteres, uma letra, um número e um caracter especial
         val passwordRegex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@\$!%*?&])[A-Za-z\\d@\$!%*?&]{6,}$".toRegex()
         return password.isNotEmpty() && password.matches(passwordRegex)
+
+
+        // Inicializar o Firebase Realtime Database
+    val firebaseDatabase = FirebaseDatabase.getInstance()
+    databaseReference = firebaseDatabase.getReference("https://drawr-840b8-default-rtdb.europe-west1.firebasedatabase.app/")
+
     }
 }

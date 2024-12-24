@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.gms.google-services") // Plugin do Google Services
+
 }
 
 android {
@@ -78,6 +79,7 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.play.services.maps)
 
     // Testing
     testImplementation(libs.junit)
@@ -87,4 +89,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // Dependência para Realtime Database
+    implementation( platform("com.google.firebase:firebase-database:20.3.3"))
+
 }
