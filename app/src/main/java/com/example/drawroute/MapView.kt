@@ -1,4 +1,5 @@
-package com.example.drawroute
+
+package com.example.drawroute;
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -9,7 +10,8 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
-class MapViewActivity : AppCompatActivity(), OnMapReadyCallback {
+
+class MapViewActivity: AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mapView: MapView
     private lateinit var googleMap: GoogleMap
@@ -60,3 +62,5 @@ class MapViewActivity : AppCompatActivity(), OnMapReadyCallback {
         mapView.onLowMemory()
     }
 }
+
+

@@ -8,7 +8,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.drawroute.LoggedInActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -20,7 +19,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.login_activity)
 
         auth = FirebaseAuth.getInstance()
 
@@ -35,6 +34,13 @@ class MainActivity : AppCompatActivity() {
         val passwordInput = findViewById<EditText>(R.id.passwordInput)
         val registerButton = findViewById<Button>(R.id.registerButton)
         val loginButton = findViewById<Button>(R.id.loginButton)
+        val fastLoginButton = findViewById<Button>(R.id.buttonFastLogin)
+
+        fastLoginButton.setOnClickListener {
+            val email = "amorimriki@gmail.com"
+            val password = "123456"
+            loginUser(email, password)
+        }
 
         registerButton.setOnClickListener {
             val email = emailInput.text.toString().trim()

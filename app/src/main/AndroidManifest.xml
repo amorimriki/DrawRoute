@@ -17,11 +17,7 @@
         android:theme="@style/Theme.DrawRoute">
 
         <activity
-            android:name=".MapView"
-            android:exported="false" />
-
-        <activity
-            android:name=".ui.theme.MapView"
+            android:name=".MapViewActivity"
             android:exported="false" />
 
         <activity
