@@ -91,6 +91,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     // Dependência para Realtime Database
-    implementation( platform("com.google.firebase:firebase-database:20.3.3"))
+    implementation(platform("com.google.firebase:firebase-database"))
 
 }
