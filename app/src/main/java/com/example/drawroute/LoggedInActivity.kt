@@ -77,13 +77,9 @@ class LoggedInActivity : AppCompatActivity() {
 
 
         createRouteButton.setOnClickListener {
-            try {
-                val intent = Intent(this, MapViewActivity::class.java)
-                startActivity(intent)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-
+            val intent = Intent(this, MapViewer::class.java)
+            startActivity(intent)
+            finish()
         }
 
         logoutButton.setOnClickListener {

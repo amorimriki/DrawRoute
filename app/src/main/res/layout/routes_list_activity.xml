@@ -85,7 +85,7 @@
         android:layout_marginStart="22dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="13dp"
-        android:backgroundTint="#FF0000"
+        android:backgroundTint="#BC0000"
         android:text="Sair"
         app:layout_constraintEnd_toStartOf="@+id/textViewTitle"
         app:layout_constraintStart_toStartOf="parent"

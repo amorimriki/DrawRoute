@@ -11,7 +11,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
 
-class MapViewActivity: AppCompatActivity(), OnMapReadyCallback {
+class MapViewer: AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mapView: MapView
     private lateinit var googleMap: GoogleMap
@@ -61,6 +61,8 @@ class MapViewActivity: AppCompatActivity(), OnMapReadyCallback {
         super.onLowMemory()
         mapView.onLowMemory()
     }
+
+
 }
 
 
