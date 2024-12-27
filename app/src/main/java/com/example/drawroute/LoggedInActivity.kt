@@ -51,8 +51,8 @@ class LoggedInActivity : AppCompatActivity() {
                     val tracks = mutableListOf<String>()
                     for (trackSnapshot in dataSnapshot.children) {
                         val name = trackSnapshot.child("name").getValue(String::class.java) ?: "Sem Nome"
-                        val comment = trackSnapshot.child("comment").getValue(String::class.java) ?: "Sem Comentário"
-                        tracks.add("$name - $comment")
+                        val timestamp = trackSnapshot.child("timestamp").getValue(String::class.java) ?: "Sem Comentário"
+                        tracks.add("$name - $timestamp")
                     }
 
                     // Atualizar os botões com as tracks disponíveis

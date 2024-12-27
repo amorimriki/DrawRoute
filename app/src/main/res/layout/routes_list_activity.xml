@@ -33,44 +33,49 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- RadioButtons para opções -->
-
-    <RadioButton
-        android:id="@+id/radioButton2"
-        android:layout_width="wrap_content"
+    <RadioGroup
+        android:id="@+id/radioGroupOptions"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Opção 2"
-        app:layout_constraintStart_toStartOf="@+id/radioButton1"
-        app:layout_constraintTop_toBottomOf="@+id/radioButton1" />
-
-    <RadioButton
-        android:id="@+id/radioButton1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:text="Opção 1"
+        android:layout_marginStart="22dp"
+        android:layout_marginEnd="22dp"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewTitle">
 
-    <RadioButton
-        android:id="@+id/radioButton3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Opção 3"
-        app:layout_constraintStart_toStartOf="@+id/radioButton2"
-        app:layout_constraintTop_toBottomOf="@+id/radioButton2" />
+        <RadioButton
+            android:id="@+id/radioButton1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:text="Opção 1" />
 
+        <RadioButton
+            android:id="@+id/radioButton2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Opção 2" />
+
+        <RadioButton
+            android:id="@+id/radioButton3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Opção 3" />
+
+    </RadioGroup>
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="368dp"
         android:layout_height="265dp"
+        android:layout_marginStart="22dp"
+        android:layout_marginEnd="22dp"
         app:layout_constraintBottom_toTopOf="@+id/buttonRoute"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radioButton3"
+        app:layout_constraintVertical_bias="0.658"
         tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
     <Button
