@@ -3,6 +3,8 @@ package com.example.drawroute
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.TextView
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
@@ -13,8 +15,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
 
-
-class LoggedInActivity : AppCompatActivity() {
+class RoutesListActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var database: FirebaseDatabase
@@ -35,14 +36,19 @@ class LoggedInActivity : AppCompatActivity() {
         // Inicializar autenticação Firebase
         auth = FirebaseAuth.getInstance()
 
-        // Botões da interface
-        val createRouteButton = findViewById<Button>(R.id.buttonRoute)
+        // Buttons
+        val createRouteButton = findViewById<Button>(R.id.buttonMenu)
         val logoutButton = findViewById<Button>(R.id.logoutButton)
         val radioButton1 = findViewById<Button>(R.id.radioButton1)
         val radioButton2 = findViewById<Button>(R.id.radioButton2)
         val radioButton3 = findViewById<Button>(R.id.radioButton3)
+        //Lables
+        val textView_CodeAPI = findViewById<TextView>(R.id.textView_CodeAPI)
+        // Images
+        val imageView = findViewById<ImageView>(R.id.imageView)
 
-
+        textView_CodeAPI.text = "CodeAPI"
+        imageView.setImageResource(R.drawable.xmap)
         // Listener para carregar tracks
         myRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -75,17 +81,24 @@ class LoggedInActivity : AppCompatActivity() {
             }
         })
 
+        radioButton1.setOnClickListener {imageView.setImageResource(R.drawable.xcnb)}
+        radioButton2.setOnClickListener {imageView.setImageResource(R.drawable.xulp)}
+        radioButton3.setOnClickListener {imageView.setImageResource(R.drawable.xcnb)}
 
+
+
+        // Change to MapViewer Layout
         createRouteButton.setOnClickListener {
-            val intent = Intent(this, MapViewer::class.java)
+            val intent = Intent(this, MapViewerActivity::class.java)
             startActivity(intent)
             finish()
         }
 
+        // Sign out the user
         logoutButton.setOnClickListener {
-            auth.signOut() // Sign out the user
+            auth.signOut()
             try {
-                val intent = Intent(this, MainActivity::class.java)
+                val intent = Intent(this, AuthActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
             } catch (e: Exception) {
