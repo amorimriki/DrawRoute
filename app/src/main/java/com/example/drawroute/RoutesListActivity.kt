@@ -57,7 +57,7 @@ class RoutesListActivity : AppCompatActivity() {
                     val tracks = mutableListOf<String>()
                     for (trackSnapshot in dataSnapshot.children) {
                         val name = trackSnapshot.child("name").getValue(String::class.java) ?: "Sem Nome"
-                        val timestamp = trackSnapshot.child("timestamp").getValue(String::class.java) ?: "Sem Comentário"
+                        val timestamp = trackSnapshot.child("timestamp").getValue(String::class.java) ?: "Sem Timestamp"
                         tracks.add("$name - $timestamp")
                     }
 

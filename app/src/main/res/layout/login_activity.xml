@@ -81,8 +81,11 @@
 
     <Button
         android:id="@+id/buttonFastLogin"
-        android:layout_width="186dp"
+        android:layout_width="370dp"
         android:layout_height="wrap_content"
         android:backgroundTint="#A88EC8"
+        android:insetLeft="100dp"
+        android:insetTop="20dp"
+        android:insetRight="100dp"
         android:text="Login as Riki" />
 </LinearLayout>
