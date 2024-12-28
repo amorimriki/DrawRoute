@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.gms.google-services") // Plugin do Google Services
-
 }
 
 android {
@@ -15,7 +14,6 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -57,10 +55,15 @@ android {
 }
 
 dependencies {
-    // Firebase Platform
+// Firebase
+    
+    //Auth Platform
     implementation(platform("com.google.firebase:firebase-bom:33.6.0"))
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.database)
+
+    //Realtime Database
+    implementation(platform("com.google.firebase:firebase-database"))
 
     // AndroidX Core
     implementation(libs.androidx.core.ktx)
@@ -89,8 +92,4 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
-    // Dependência para Realtime Database
-    implementation(platform("com.google.firebase:firebase-database"))
-
 }
