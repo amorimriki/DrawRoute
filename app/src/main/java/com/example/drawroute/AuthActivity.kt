@@ -1,20 +1,22 @@
 package com.example.drawroute
 
+
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
-
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 
 class AuthActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
+    private lateinit var databaseReference: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +37,6 @@ class AuthActivity : AppCompatActivity() {
         val loginButton = findViewById<Button>(R.id.loginButton)
         val fastLoginButton = findViewById<Button>(R.id.buttonFastLogin)
 
-        fastLoginButton.visibility = View.VISIBLE
         fastLoginButton.setOnClickListener {
             val email = "amorimriki@gmail.com"
             val password = "123456"
@@ -116,7 +117,11 @@ class AuthActivity : AppCompatActivity() {
         // Senha deve ter pelo menos 6 caracteres, uma letra, um número e um caracter especial
         val passwordRegex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@\$!%*?&])[A-Za-z\\d@\$!%*?&]{6,}$".toRegex()
         return password.isNotEmpty() && password.matches(passwordRegex)
-        // Inicializar o Firebase Realtime Database
-    }
 
+
+        // Inicializar o Firebase Realtime Database
+    val firebaseDatabase = FirebaseDatabase.getInstance()
+    databaseReference = firebaseDatabase.getReference("https://drawr-840b8-default-rtdb.europe-west1.firebasedatabase.app/")
+
+    }
 }
