@@ -158,16 +158,16 @@ class MapActivity : AppCompatActivity() {
     // [END maps_android_add_map_codelab_ktx_add_markers]
 
     private fun addPolyLine1(googleMap : GoogleMap){
-        // Exemplo de coordenadas para 2 pontos
+        // point1 = ULP   point2 = Estação São Bento
         val point1 = LatLng(41.143142,-8.608051)
         val point2 = LatLng(41.145517,-8.610197)
 
-        // Criar uma linha entre os 2 pontos
+        // Criar uma linha entre ULP e Estação São Bento
         val polyLineOptions = PolylineOptions()
             .add(point1)
             .add(point2)
             .width(10f) //Espessura da linha
-            .color(ContextCompat.getColor(this, R.color.colorPrimary))
+            .color(ContextCompat.getColor(this, R.color.red_line))
             .geodesic(true)
 
         // Adicionar linha ao mapa
@@ -175,16 +175,16 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun addPolyLine2(googleMap : GoogleMap){
-        // Exemplo de coordenadas para 2 pontos
+        // point1 = CNB    point2 = Estação Campanhã
         val point1 = LatLng(41.151968,-8.593293)
         val point2 = LatLng(41.149092,-8.585193)
 
-        // Criar uma linha entre os 2 pontos
+        // Criar uma linha entre Centro de Negócios de Bonfim e Estação Campanhã
         val polyLineOptions = PolylineOptions()
             .add(point1)
             .add(point2)
             .width(10f) //Espessura da linha
-            .color(ContextCompat.getColor(this, R.color.colorPrimary))
+            .color(ContextCompat.getColor(this, R.color.green_line))
             .geodesic(true)
 
         // Adicionar linha ao mapa
@@ -192,11 +192,11 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun addPolyLine3(googleMap : GoogleMap){
-        // Exemplo de coordenadas para 2 pontos
+        // point1 = CNB        point2 = Via Catarina
         val point1 = LatLng(41.151968,-8.593293)
         val point2 = LatLng(41.149076,-8.605975)
 
-        // Criar uma linha entre os 2 pontos
+        // Criar uma linha entre Centro de Negócios de Bonfim e Via Catarina
         val polyLineOptions = PolylineOptions()
             .add(point1)
             .add(point2)
@@ -209,11 +209,11 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun addPolyLine4(googleMap : GoogleMap){
-        // Exemplo de coordenadas para 2 pontos
+        // point1 = Via Catarina        point2 = ULP
         val point1 = LatLng(41.149076,-8.605975)
         val point2 = LatLng(41.143142,-8.608051)
 
-        // Criar uma linha entre os 2 pontos
+        // Criar uma linha entre Via Catarina e ULP
         val polyLineOptions = PolylineOptions()
             .add(point1)
             .add(point2)
@@ -226,11 +226,11 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun addPolyLine5(googleMap : GoogleMap){
-        // Exemplo de coordenadas para 2 pontos
+        // point1 = ULP      point2= CNB
         val point1 = LatLng(41.143142,-8.608051)
         val point2 = LatLng(41.151968,-8.593293)
 
-        // Criar uma linha entre os 2 pontos
+        // Criar uma linha entre ULP e Centro de Negócios de Bonfim
         val polyLineOptions = PolylineOptions()
             .add(point1)
             .add(point2)
