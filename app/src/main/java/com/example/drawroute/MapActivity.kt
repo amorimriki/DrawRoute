@@ -18,6 +18,7 @@ import com.google.maps.android.ktx.addMarker
 import com.google.maps.android.ktx.awaitMap
 import com.google.maps.android.ktx.awaitMapLoad
 import org.json.JSONObject
+import kotlinx.coroutines.launch
 
 class MapActivity : AppCompatActivity() {
 
@@ -44,6 +45,7 @@ class MapActivity : AppCompatActivity() {
             // Carregar e extrair os pontos das tracks do JSON
             val jsonString = loadDatabaseJson()
             val tracks = extractPointsFromDatabase(jsonString)
+            val referencePoints = extractReferencePointsFromDatabase(jsonString)
 
             // Adicionar polilinhas para todas as tracks
             processTracksAndAddPolylines(googleMap, tracks)
@@ -54,6 +56,8 @@ class MapActivity : AppCompatActivity() {
             // Ensure all places are visible in the map
             val bounds = LatLngBounds.builder()
             places.forEach { bounds.include(it.latLng) }
+            tracks.values.flatten().forEach { bounds.include(it) }
+            referencePoints.forEach { bounds.include(it.latLng) }
             googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 20))
         }
 
@@ -158,7 +162,6 @@ class MapActivity : AppCompatActivity() {
         // Itera pelos pontos na base de dados
         for (i in 0 until pointsArray.length()) {
             val point = pointsArray.optJSONObject(i) ?: continue
-
             val trackId = point.optInt("track", -1)
             val latitude = point.optDouble("latitude", Double.NaN)
             val longitude = point.optDouble("longitude", Double.NaN)
@@ -171,6 +174,26 @@ class MapActivity : AppCompatActivity() {
         }
 
         return tracks
+    }
+
+
+    private fun extractReferencePointsFromDatabase(jsonString: String): List<Place> {
+        val referencePoints = mutableListOf<Place>()
+        val jsonObject = JSONObject(jsonString)
+        val referenceArray = jsonObject.optJSONArray("referencePoints") ?: return emptyList()
+
+        for (i in 0 until referenceArray.length()) {
+            val refPoint = referenceArray.optJSONObject(i) ?: continue
+            val name = refPoint.optString("name", "Sem Nome")
+            val latitude = refPoint.optDouble("latitude", Double.NaN)
+            val longitude = refPoint.optDouble("longitude", Double.NaN)
+
+            if (!latitude.isNaN() && !longitude.isNaN()) {
+                referencePoints.add(Place(name, LatLng(latitude, longitude), ""))
+            }
+        }
+
+        return referencePoints
     }
 
     private fun loadDatabaseJson(): String {
@@ -197,6 +220,16 @@ class MapActivity : AppCompatActivity() {
 
                 googleMap.addPolyline(polylineOptions)
                 colorIndex++
+            }
+        }
+    }
+
+    private fun addReferenceMarkers(googleMap: GoogleMap, referencePoints: List<Place>) {
+        referencePoints.forEach { place ->
+            googleMap.addMarker {
+                position(place.latLng)
+                title(place.name)
+                icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
             }
         }
     }
