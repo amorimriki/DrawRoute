@@ -28,7 +28,7 @@ class PlaceRenderer(
         )
         BitmapHelper.vectorToBitmap(
             context,
-            R.drawable.ic_directions_bike_black_24dp,
+            R.drawable.ic_map_pin_24dp,
             color
         )
     }

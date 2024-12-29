@@ -1,6 +1,8 @@
 package com.example.drawroute
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
@@ -26,7 +28,8 @@ class MapActivity : AppCompatActivity() {
     // [START maps_android_add_map_codelab_ktx_coroutines]
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_map)
+        val buttonMenu = findViewById<Button>(R.id.buttonMenu)
         val mapFragment =
             supportFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
         lifecycleScope.launchWhenCreated {
@@ -42,6 +45,12 @@ class MapActivity : AppCompatActivity() {
             val bounds = LatLngBounds.builder()
             places.forEach { bounds.include(it.latLng) }
             googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 20))
+        }
+
+        buttonMenu.setOnClickListener {
+            val intent = Intent(this, RoutesListActivity::class.java)
+            startActivity(intent)
+            finish()
         }
     }
     // [END maps_android_add_map_codelab_ktx_coroutines]
@@ -108,7 +117,7 @@ class MapActivity : AppCompatActivity() {
 
     private val bicycleIcon: BitmapDescriptor by lazy {
         val color = ContextCompat.getColor(this, R.color.colorPrimary)
-        BitmapHelper.vectorToBitmap(this, R.drawable.ic_directions_bike_black_24dp, color)
+        BitmapHelper.vectorToBitmap(this, R.drawable.ic_map_pin_24dp, color)
     }
 
     // [START maps_android_add_map_codelab_ktx_add_markers]
@@ -132,4 +141,6 @@ class MapActivity : AppCompatActivity() {
     companion object {
         val TAG = MapActivity::class.java.simpleName
     }
+
+
 }
