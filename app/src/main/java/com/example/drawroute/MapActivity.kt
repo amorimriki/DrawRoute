@@ -18,7 +18,6 @@ import com.google.maps.android.ktx.addMarker
 import com.google.maps.android.ktx.awaitMap
 import com.google.maps.android.ktx.awaitMapLoad
 import org.json.JSONObject
-import kotlinx.coroutines.launch
 
 class MapActivity : AppCompatActivity() {
 
@@ -175,7 +174,6 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun loadDatabaseJson(): String {
-        // Exemplo: Carregar JSON como string (substitua pelo método adequado para seu caso)
         return assets.open("drawr-840b8-default-rtdb-export.json").bufferedReader().use { it.readText() }
     }
 
