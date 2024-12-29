@@ -2,7 +2,9 @@
 agp = "8.6.0"
 androidMapsUtils = "2.2.0"
 appcompatVersion = "1.4.1"
+compiler = "4.16.0"
 coreKtxVersion = "1.7.0"
+glide = "4.16.0"
 gson = "2.10.1"
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
@@ -23,12 +25,15 @@ activityCompose = "1.9.3"
 composeBom = "2024.04.01"
 firebaseAuthKtx = "23.1.0"
 playServicesMaps = "19.0.0"
+firebaseCrashlyticsBuildtools = "3.0.2"
 
 [libraries]
 android-maps-utils = { module = "com.google.maps.android:android-maps-utils", version.ref = "androidMapsUtils" }
 androidx-appcompat-v141 = { module = "androidx.appcompat:appcompat", version.ref = "appcompatVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-core-ktx-v170 = { module = "androidx.core:core-ktx", version.ref = "coreKtxVersion" }
+glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compiler" }
 google-firebase-database = { module = "com.google.firebase:firebase-database" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -54,6 +59,7 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
+firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

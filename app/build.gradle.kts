@@ -85,6 +85,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.play.services.maps)
+    implementation(libs.firebase.crashlytics.buildtools)
 
     // Testing
     testImplementation(libs.junit)
@@ -136,5 +137,8 @@ dependencies {
 
     // Lifecycle Runtime KTX Library
     implementation (libs.androidx.lifecycle.runtime.ktx)
+
+    implementation (libs.glide)
+    annotationProcessor (libs.glide.compiler)
 }
 
