@@ -17,7 +17,8 @@ import com.google.maps.android.ktx.addCircle
 import com.google.maps.android.ktx.addMarker
 import com.google.maps.android.ktx.awaitMap
 import com.google.maps.android.ktx.awaitMapLoad
-
+import org.json.JSONObject
+import kotlinx.coroutines.launch
 
 class MapActivity : AppCompatActivity() {
 
@@ -41,21 +42,12 @@ class MapActivity : AppCompatActivity() {
             // Wait for map to finish loading
             googleMap.awaitMapLoad()
 
-            // Adicionar uma linha entre ULP e Estação São Bento
-            addPolyLine1(googleMap)
+            // Carregar e extrair os pontos das tracks do JSON
+            val jsonString = loadDatabaseJson()
+            val tracks = extractPointsFromDatabase(jsonString)
 
-            // Adicionar uma linha entre Centro de Negócios de Bonfim e Estação Campanhã
-            addPolyLine2(googleMap)
-
-            // Adicionar uma linha entre Centro de Negócios de Bonfim e Via Catarina
-            addPolyLine3(googleMap)
-
-            // Adicionar uma linha entre Via Catarina e ULP
-            addPolyLine4(googleMap)
-
-            // Adicionar uma linha entre ULP e Centro de Negócios de Bonfim
-            addPolyLine5(googleMap)
-
+            // Adicionar polilinhas para todas as tracks
+            processTracksAndAddPolylines(googleMap, tracks)
 
             // Esperar o carregamento completo do mapa
             googleMap.awaitMapLoad()
@@ -157,89 +149,58 @@ class MapActivity : AppCompatActivity() {
     }
     // [END maps_android_add_map_codelab_ktx_add_markers]
 
-    private fun addPolyLine1(googleMap : GoogleMap){
-        // point1 = ULP   point2 = Estação São Bento
-        val point1 = LatLng(41.143142,-8.608051)
-        val point2 = LatLng(41.145517,-8.610197)
+    private fun extractPointsFromDatabase(jsonString: String): Map<Int, List<LatLng>> {
+        val tracks = mutableMapOf<Int, MutableList<LatLng>>()
 
-        // Criar uma linha entre ULP e Estação São Bento
-        val polyLineOptions = PolylineOptions()
-            .add(point1)
-            .add(point2)
-            .width(10f) //Espessura da linha
-            .color(ContextCompat.getColor(this, R.color.red_line))
-            .geodesic(true)
+        // Parse o JSON fornecido
+        val jsonObject = JSONObject(jsonString)
+        val pointsArray = jsonObject.getJSONArray("points")
 
-        // Adicionar linha ao mapa
-        googleMap.addPolyline((polyLineOptions))
+        // Itera pelos pontos na base de dados
+        for (i in 0 until pointsArray.length()) {
+            val point = pointsArray.optJSONObject(i) ?: continue
+
+            val trackId = point.optInt("track", -1)
+            val latitude = point.optDouble("latitude", Double.NaN)
+            val longitude = point.optDouble("longitude", Double.NaN)
+
+            if (!latitude.isNaN() && !longitude.isNaN() && trackId != -1) {
+                val latLng = LatLng(latitude, longitude)
+                tracks.putIfAbsent(trackId, mutableListOf())
+                tracks[trackId]?.add(latLng)
+            }
+        }
+
+        return tracks
     }
 
-    private fun addPolyLine2(googleMap : GoogleMap){
-        // point1 = CNB    point2 = Estação Campanhã
-        val point1 = LatLng(41.151968,-8.593293)
-        val point2 = LatLng(41.149092,-8.585193)
-
-        // Criar uma linha entre Centro de Negócios de Bonfim e Estação Campanhã
-        val polyLineOptions = PolylineOptions()
-            .add(point1)
-            .add(point2)
-            .width(10f) //Espessura da linha
-            .color(ContextCompat.getColor(this, R.color.green_line))
-            .geodesic(true)
-
-        // Adicionar linha ao mapa
-        googleMap.addPolyline((polyLineOptions))
+    private fun loadDatabaseJson(): String {
+        // Exemplo: Carregar JSON como string (substitua pelo método adequado para seu caso)
+        return assets.open("drawr-840b8-default-rtdb-export.json").bufferedReader().use { it.readText() }
     }
 
-    private fun addPolyLine3(googleMap : GoogleMap){
-        // point1 = CNB        point2 = Via Catarina
-        val point1 = LatLng(41.151968,-8.593293)
-        val point2 = LatLng(41.149076,-8.605975)
+    private fun processTracksAndAddPolylines(googleMap: GoogleMap, tracks: Map<Int, List<LatLng>>) {
+        val colors = listOf(
+            R.color.red_line,
+            R.color.green_line,
+            R.color.blue_line,
+            R.color.colorPrimary,
+            R.color.yellow_line
+        )
 
-        // Criar uma linha entre Centro de Negócios de Bonfim e Via Catarina
-        val polyLineOptions = PolylineOptions()
-            .add(point1)
-            .add(point2)
-            .width(10f) //Espessura da linha
-            .color(ContextCompat.getColor(this, R.color.colorPrimary))
-            .geodesic(true)
+        var colorIndex = 0
+        for ((_, points) in tracks) {
+            if (points.isNotEmpty()) {
+                val polylineOptions = PolylineOptions()
+                    .addAll(points)
+                    .width(10f) // Espessura da linha
+                    .color(ContextCompat.getColor(this, colors[colorIndex % colors.size]))
+                    .geodesic(true)
 
-        // Adicionar linha ao mapa
-        googleMap.addPolyline((polyLineOptions))
-    }
-
-    private fun addPolyLine4(googleMap : GoogleMap){
-        // point1 = Via Catarina        point2 = ULP
-        val point1 = LatLng(41.149076,-8.605975)
-        val point2 = LatLng(41.143142,-8.608051)
-
-        // Criar uma linha entre Via Catarina e ULP
-        val polyLineOptions = PolylineOptions()
-            .add(point1)
-            .add(point2)
-            .width(10f) //Espessura da linha
-            .color(ContextCompat.getColor(this, R.color.colorPrimary))
-            .geodesic(true)
-
-        // Adicionar linha ao mapa
-        googleMap.addPolyline((polyLineOptions))
-    }
-
-    private fun addPolyLine5(googleMap : GoogleMap){
-        // point1 = ULP      point2= CNB
-        val point1 = LatLng(41.143142,-8.608051)
-        val point2 = LatLng(41.151968,-8.593293)
-
-        // Criar uma linha entre ULP e Centro de Negócios de Bonfim
-        val polyLineOptions = PolylineOptions()
-            .add(point1)
-            .add(point2)
-            .width(10f) //Espessura da linha
-            .color(ContextCompat.getColor(this, R.color.colorPrimary))
-            .geodesic(true)
-
-        // Adicionar linha ao mapa
-        googleMap.addPolyline((polyLineOptions))
+                googleMap.addPolyline(polylineOptions)
+                colorIndex++
+            }
+        }
     }
 
     companion object {
