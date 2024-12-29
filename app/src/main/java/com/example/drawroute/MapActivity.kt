@@ -41,8 +41,21 @@ class MapActivity : AppCompatActivity() {
             // Wait for map to finish loading
             googleMap.awaitMapLoad()
 
-            // Adicionar uma linha entre dois pontos
-            addPolyLine(googleMap)
+            // Adicionar uma linha entre ULP e Estação São Bento
+            addPolyLine1(googleMap)
+
+            // Adicionar uma linha entre Centro de Negócios de Bonfim e Estação Campanhã
+            addPolyLine2(googleMap)
+
+            // Adicionar uma linha entre Centro de Negócios de Bonfim e Via Catarina
+            addPolyLine3(googleMap)
+
+            // Adicionar uma linha entre Via Catarina e ULP
+            addPolyLine4(googleMap)
+
+            // Adicionar uma linha entre ULP e Centro de Negócios de Bonfim
+            addPolyLine5(googleMap)
+
 
             // Esperar o carregamento completo do mapa
             googleMap.awaitMapLoad()
@@ -144,10 +157,78 @@ class MapActivity : AppCompatActivity() {
     }
     // [END maps_android_add_map_codelab_ktx_add_markers]
 
-    private fun addPolyLine(googleMap : GoogleMap){
+    private fun addPolyLine1(googleMap : GoogleMap){
         // Exemplo de coordenadas para 2 pontos
-        val point1 = LatLng(41.151956,-8.593240)
+        val point1 = LatLng(41.143142,-8.608051)
+        val point2 = LatLng(41.145517,-8.610197)
+
+        // Criar uma linha entre os 2 pontos
+        val polyLineOptions = PolylineOptions()
+            .add(point1)
+            .add(point2)
+            .width(10f) //Espessura da linha
+            .color(ContextCompat.getColor(this, R.color.colorPrimary))
+            .geodesic(true)
+
+        // Adicionar linha ao mapa
+        googleMap.addPolyline((polyLineOptions))
+    }
+
+    private fun addPolyLine2(googleMap : GoogleMap){
+        // Exemplo de coordenadas para 2 pontos
+        val point1 = LatLng(41.151968,-8.593293)
+        val point2 = LatLng(41.149092,-8.585193)
+
+        // Criar uma linha entre os 2 pontos
+        val polyLineOptions = PolylineOptions()
+            .add(point1)
+            .add(point2)
+            .width(10f) //Espessura da linha
+            .color(ContextCompat.getColor(this, R.color.colorPrimary))
+            .geodesic(true)
+
+        // Adicionar linha ao mapa
+        googleMap.addPolyline((polyLineOptions))
+    }
+
+    private fun addPolyLine3(googleMap : GoogleMap){
+        // Exemplo de coordenadas para 2 pontos
+        val point1 = LatLng(41.151968,-8.593293)
+        val point2 = LatLng(41.149076,-8.605975)
+
+        // Criar uma linha entre os 2 pontos
+        val polyLineOptions = PolylineOptions()
+            .add(point1)
+            .add(point2)
+            .width(10f) //Espessura da linha
+            .color(ContextCompat.getColor(this, R.color.colorPrimary))
+            .geodesic(true)
+
+        // Adicionar linha ao mapa
+        googleMap.addPolyline((polyLineOptions))
+    }
+
+    private fun addPolyLine4(googleMap : GoogleMap){
+        // Exemplo de coordenadas para 2 pontos
+        val point1 = LatLng(41.149076,-8.605975)
         val point2 = LatLng(41.143142,-8.608051)
+
+        // Criar uma linha entre os 2 pontos
+        val polyLineOptions = PolylineOptions()
+            .add(point1)
+            .add(point2)
+            .width(10f) //Espessura da linha
+            .color(ContextCompat.getColor(this, R.color.colorPrimary))
+            .geodesic(true)
+
+        // Adicionar linha ao mapa
+        googleMap.addPolyline((polyLineOptions))
+    }
+
+    private fun addPolyLine5(googleMap : GoogleMap){
+        // Exemplo de coordenadas para 2 pontos
+        val point1 = LatLng(41.143142,-8.608051)
+        val point2 = LatLng(41.151968,-8.593293)
 
         // Criar uma linha entre os 2 pontos
         val polyLineOptions = PolylineOptions()
