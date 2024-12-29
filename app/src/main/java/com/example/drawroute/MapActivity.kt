@@ -41,6 +41,12 @@ class MapActivity : AppCompatActivity() {
             // Wait for map to finish loading
             googleMap.awaitMapLoad()
 
+            // Adicionar uma linha entre dois pontos
+            addPolyLine(googleMap)
+
+            // Esperar o carregamento completo do mapa
+            googleMap.awaitMapLoad()
+
             // Ensure all places are visible in the map
             val bounds = LatLngBounds.builder()
             places.forEach { bounds.include(it.latLng) }
@@ -137,6 +143,23 @@ class MapActivity : AppCompatActivity() {
         }
     }
     // [END maps_android_add_map_codelab_ktx_add_markers]
+
+    private fun addPolyLine(googleMap : GoogleMap){
+        // Exemplo de coordenadas para 2 pontos
+        val point1 = LatLng(41.151956,-8.593240)
+        val point2 = LatLng(41.143142,-8.608051)
+
+        // Criar uma linha entre os 2 pontos
+        val polyLineOptions = PolylineOptions()
+            .add(point1)
+            .add(point2)
+            .width(10f) //Espessura da linha
+            .color(ContextCompat.getColor(this, R.color.colorPrimary))
+            .geodesic(true)
+
+        // Adicionar linha ao mapa
+        googleMap.addPolyline((polyLineOptions))
+    }
 
     companion object {
         val TAG = MapActivity::class.java.simpleName

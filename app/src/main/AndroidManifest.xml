@@ -11,31 +11,31 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DrawRoute">
 
-    <meta-data
-        android:name="com.google.android.geo.API_KEY"
-        android:value="${GOOGLE_MAPS_API_KEY}" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${GOOGLE_MAPS_API_KEY}" />
 
-    <activity
-        android:name=".MapActivity"
-        android:exported="true">
-    </activity>
+        <activity
+            android:name=".MapActivity"
+            android:exported="true">
+        </activity>
 
-    <activity
-        android:name=".MarkerInfoWindowAdapter"
-        android:exported="false"
-        android:theme="@style/Theme.DrawRoute" />
+        <activity
+            android:name=".MarkerInfoWindowAdapter"
+            android:exported="false"
+            android:theme="@style/Theme.DrawRoute" />
 
-    <activity
-        android:name=".AuthActivity"
-        android:exported="true">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+        <activity
+            android:name=".AuthActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
-    <activity
-        android:name=".RoutesListActivity"
-        android:exported="true" />
-</application>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".RoutesListActivity"
+            android:exported="true" />
+    </application>
 </manifest>
