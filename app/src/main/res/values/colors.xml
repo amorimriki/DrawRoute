@@ -9,4 +9,9 @@
     <color name="success">#4CAF50</color>
     <color name="error">#F44336</color>
     <color name="gray_stroke">#DDDDDD</color>
+    <color name="colorPrimary">#6200EE</color>
+    <color name="colorPrimaryTranslucent">#556200EE</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#03DAC5</color>
+
 </resources>

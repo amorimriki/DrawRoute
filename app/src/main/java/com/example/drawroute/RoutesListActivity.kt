@@ -89,7 +89,7 @@ class RoutesListActivity : AppCompatActivity() {
 
         // Change to MapViewer Layout
         createRouteButton.setOnClickListener {
-            val intent = Intent(this, MapViewerActivity::class.java)
+            val intent = Intent(this, MapActivity::class.java)
             startActivity(intent)
             finish()
         }

@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.gms.google-services") // Plugin do Google Services
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin") version "2.0.1"
+
 }
 
 android {
@@ -58,12 +60,12 @@ dependencies {
 // Firebase
     
     //Auth Platform
-    implementation(platform("com.google.firebase:firebase-bom:33.6.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.database)
 
     //Realtime Database
-    implementation(platform("com.google.firebase:firebase-database"))
+    implementation(libs.google.firebase.database)
 
     // AndroidX Core
     implementation(libs.androidx.core.ktx)
@@ -92,4 +94,47 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+
+    implementation(libs.kotlin.stdlib.jdk7)
+    implementation(libs.androidx.appcompat.v141)
+    implementation(libs.androidx.core.ktx.v170)
+    implementation(libs.gson)
+    testImplementation(libs.junit)
+
+    // Dependency to include Maps SDK for Android
+    implementation (libs.kotlin.stdlib.jdk7)
+    implementation (libs.androidx.appcompat.v141)
+    implementation (libs.androidx.core.ktx.v170)
+    implementation (libs.gson)
+    testImplementation (libs.junit)
+
+    // Dependency to include Maps SDK for Android
+    implementation (libs.play.services.maps)
+    implementation (libs.android.maps.utils)
+    // [END_EXCLUDE]
+
+    // Maps SDK for Android KTX Library
+    implementation (libs.maps.ktx)
+
+    // Maps SDK for Android Utility Library KTX Library
+    implementation (libs.maps.utils.ktx)
+
+    // Lifecycle Runtime KTX Library
+    implementation (libs.androidx.lifecycle.runtime.ktx)
 }
+
