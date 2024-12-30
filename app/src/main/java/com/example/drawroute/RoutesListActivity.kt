@@ -24,6 +24,11 @@ class RoutesListActivity : AppCompatActivity() {
 
     private val imageList = mutableListOf<ImageData>()
 
+    object trackformaps {
+        var name: String = ""
+        var id: Int = 0
+    }
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +37,7 @@ class RoutesListActivity : AppCompatActivity() {
         // Inicializar Firebase
         FirebaseApp.initializeApp(this)
         database = FirebaseDatabase.getInstance("https://drawr-840b8-default-rtdb.europe-west1.firebasedatabase.app/")
-        myRef = database.getReference("tracks")
+
 
         auth = FirebaseAuth.getInstance()
 
@@ -45,6 +50,7 @@ class RoutesListActivity : AppCompatActivity() {
         val imageView = findViewById<ImageView>(R.id.imageView)
         val logtex = findViewById<TextView>(R.id.textViewLog)
         var imageUrl = "https://drive.google.com/uc?id=1DyBMZnKF0DVEWABfzzB6CtqPJaHVJ4om"
+
         Glide.with(this)
             .load(imageUrl)
             .into(imageView)
@@ -73,6 +79,7 @@ class RoutesListActivity : AppCompatActivity() {
     }
     data class ImageData(val name: String, val fotopath: String)
     private fun carregarTracks(radioButton1: Button, radioButton2: Button, radioButton3: Button) {
+        myRef = database.getReference("tracks")
         myRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -84,8 +91,11 @@ class RoutesListActivity : AppCompatActivity() {
                     }
                     // Atualizar botões com os tracks
                     radioButton1.text = tracks.getOrNull(0) ?: "Track 1 não disponível"
+                    trackformaps.name = tracks.getOrNull(0) ?: "Track 1 não disponível"
                     radioButton2.text = tracks.getOrNull(1) ?: "Track 2 não disponível"
+                    trackformaps.name = tracks.getOrNull(1) ?: "Track 1 não disponível"
                     radioButton3.text = tracks.getOrNull(2) ?: "Track 3 não disponível"
+                    trackformaps.name = tracks.getOrNull(2) ?: "Track 1 não disponível"
                 } else {
                     radioButton1.text = "Nenhuma track encontrada"
                     radioButton2.text = "Nenhuma track encontrada"
@@ -102,11 +112,12 @@ class RoutesListActivity : AppCompatActivity() {
     }
 
     private fun carregarImagens() {
+        myRef = database.getReference("referencePoints")
         myRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
                     imageList.clear()
-                    for (referenceSnapshot in dataSnapshot.child("referencePoints").children) {
+                    for (referenceSnapshot in dataSnapshot.children) {
                         val name = referenceSnapshot.child("name").getValue(String::class.java) ?: "Sem Nome"
                         var fotopath = referenceSnapshot.child("fotoPath").getValue(String::class.java) ?: "Sem fotoPath"
 
@@ -121,7 +132,7 @@ class RoutesListActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Log de erro ou tratamento
+
 
             }
         })
@@ -135,18 +146,23 @@ class RoutesListActivity : AppCompatActivity() {
         imageView: ImageView
     ) {
         radioButton1.setOnClickListener {
+            trackformaps.id = 1
             val imageUrl = imageList.getOrNull(0)?.fotopath ?: ""
             exibirImagem(imageUrl, routeButton, imageView)
         }
 
         radioButton2.setOnClickListener {
+            trackformaps.id = 2
             val imageUrl = imageList.getOrNull(1)?.fotopath ?: ""
             exibirImagem(imageUrl, routeButton, imageView)
+
         }
 
         radioButton3.setOnClickListener {
+            trackformaps.id = 3
             val imageUrl = imageList.getOrNull(0)?.fotopath ?: ""
             exibirImagem(imageUrl, routeButton, imageView)
+
         }
     }
 

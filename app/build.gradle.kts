@@ -60,12 +60,14 @@ dependencies {
 // Firebase
     
     //Auth Platform
-    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
+    implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.database)
 
     //Realtime Database
     implementation(libs.google.firebase.database)
+
+
 
     // AndroidX Core
     implementation(libs.androidx.core.ktx)
@@ -86,6 +88,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.play.services.maps)
     implementation(libs.firebase.crashlytics.buildtools)
+    implementation(libs.firebase.storage.ktx)
 
     // Testing
     testImplementation(libs.junit)

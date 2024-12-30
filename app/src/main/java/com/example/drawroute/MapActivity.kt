@@ -1,8 +1,10 @@
 package com.example.drawroute
 
+import com.example.drawroute.RoutesListActivity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
@@ -31,6 +33,8 @@ class MapActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
         val buttonMenu = findViewById<Button>(R.id.buttonMenu)
+        val routeName = findViewById<TextView>(R.id.routeName)
+        routeName.text = RoutesListActivity.trackformaps.name
         val mapFragment =
             supportFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
         lifecycleScope.launchWhenCreated {
@@ -48,6 +52,8 @@ class MapActivity : AppCompatActivity() {
             val referencePoints = extractReferencePointsFromDatabase(jsonString)
 
             // Adicionar polilinhas para todas as tracks
+
+            val tracksID = RoutesListActivity.trackformaps.id
             processTracksAndAddPolylines(googleMap, tracks)
 
             // Esperar o carregamento completo do mapa
