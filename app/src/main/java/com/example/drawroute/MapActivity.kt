@@ -159,6 +159,8 @@ class MapActivity : AppCompatActivity() {
     // [END maps_android_add_map_codelab_ktx_add_markers]
 
     private fun extractPointsFromDatabase(jsonString: String): Map<Int, List<LatLng>> {
+
+
         val tracks = mutableMapOf<Int, MutableList<LatLng>>()
 
         // Parse o JSON fornecido
@@ -207,26 +209,32 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun processTracksAndAddPolylines(googleMap: GoogleMap, tracks: Map<Int, List<LatLng>>) {
-        val colors = listOf(
+        /*val colors = listOf(
             R.color.red_line,
             R.color.green_line,
             R.color.blue_line,
             R.color.colorPrimary,
             R.color.yellow_line
-        )
+        )*/
 
-        var colorIndex = 0
-        for ((_, points) in tracks) {
-            if (points.isNotEmpty()) {
-                val polylineOptions = PolylineOptions()
-                    .addAll(points)
-                    .width(10f) // Espessura da linha
-                    .color(ContextCompat.getColor(this, colors[colorIndex % colors.size]))
-                    .geodesic(true)
+        val trackID = RoutesListActivity.trackformaps.id // Obtém o ID da rota selecionada
 
-                googleMap.addPolyline(polylineOptions)
-                colorIndex++
-            }
+        // Verifica se a rota com o trackID existe nos dados carregados
+        val points = tracks[trackID]
+
+        if (points != null && points.isNotEmpty()) {
+            // Configura as opções da polilinha
+            val polylineOptions = PolylineOptions()
+                .addAll(points)
+                .width(10f) // Espessura da linha
+                .color(ContextCompat.getColor(this, R.color.colorPrimary))
+                .geodesic(true)
+
+            // Adiciona a polilinha no mapa
+            googleMap.addPolyline(polylineOptions)
+        } else {
+            // Log ou mensagem de erro caso o trackID não seja encontrado
+            println("Track ID $trackID não encontrado ou não possui pontos!")
         }
     }
 

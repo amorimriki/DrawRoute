@@ -45,6 +45,7 @@ class RoutesListActivity : AppCompatActivity() {
         val imageView = findViewById<ImageView>(R.id.imageView)
         val logText = findViewById<TextView>(R.id.textViewLog)
         logText.visibility = View.INVISIBLE
+
         val defaultImageUrl = "https://webcolours.ca/wp-content/uploads/2020/10/webcolours-unknown.png"
 
         Glide.with(this)
@@ -90,8 +91,12 @@ class RoutesListActivity : AppCompatActivity() {
                     }
                     // Atualizar botões com os tracks
                     radioButton1.text = tracks.getOrNull(0) ?: "Track 1 não disponível"
+                    trackformaps.name = tracks.getOrNull(0) ?: "Track 1 não disponível"
                     radioButton2.text = tracks.getOrNull(1) ?: "Track 2 não disponível"
+                    trackformaps.name = tracks.getOrNull(1) ?: "Track 2 não disponível"
                     radioButton3.text = tracks.getOrNull(2) ?: "Track 3 não disponível"
+                    trackformaps.name = tracks.getOrNull(2) ?: "Track 3 não disponível"
+
                 } else {
                     radioButton1.text = "Nenhuma track encontrada"
                     radioButton2.text = "Nenhuma track encontrada"
