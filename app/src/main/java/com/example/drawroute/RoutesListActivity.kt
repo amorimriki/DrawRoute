@@ -3,7 +3,6 @@ package com.example.drawroute
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -12,11 +11,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.crashlytics.buildtools.reloc.org.apache.commons.logging.Log
 import com.google.firebase.database.*
 
 class RoutesListActivity : AppCompatActivity() {
-
 
     private lateinit var auth: FirebaseAuth
     private lateinit var database: FirebaseDatabase
@@ -37,8 +34,6 @@ class RoutesListActivity : AppCompatActivity() {
         // Inicializar Firebase
         FirebaseApp.initializeApp(this)
         database = FirebaseDatabase.getInstance("https://drawr-840b8-default-rtdb.europe-west1.firebasedatabase.app/")
-
-
         auth = FirebaseAuth.getInstance()
 
         // Inicializar botões e imagem
@@ -48,12 +43,14 @@ class RoutesListActivity : AppCompatActivity() {
         val radioButton2 = findViewById<Button>(R.id.radioButton2)
         val radioButton3 = findViewById<Button>(R.id.radioButton3)
         val imageView = findViewById<ImageView>(R.id.imageView)
-        val logtex = findViewById<TextView>(R.id.textViewLog)
-        var imageUrl = "https://drive.google.com/uc?id=1DyBMZnKF0DVEWABfzzB6CtqPJaHVJ4om"
+        val logText = findViewById<TextView>(R.id.textViewLog)
+        logText.visibility = View.INVISIBLE
+        val defaultImageUrl = "https://webcolours.ca/wp-content/uploads/2020/10/webcolours-unknown.png"
 
         Glide.with(this)
-            .load(imageUrl)
+            .load(defaultImageUrl)
             .into(imageView)
+
         // Listener para carregar tracks
         carregarTracks(radioButton1, radioButton2, radioButton3)
 
@@ -61,7 +58,7 @@ class RoutesListActivity : AppCompatActivity() {
         carregarImagens()
 
         // Configurar botões para exibir imagens
-        configurarBotoesParaImagens(radioButton1, radioButton2, radioButton3, routeButton, imageView)
+        configurarBotoesParaImagens(radioButton1, radioButton2, radioButton3, routeButton, imageView, logText)
 
         // Botão para abrir o MapActivity
         routeButton.setOnClickListener {
@@ -77,7 +74,9 @@ class RoutesListActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
     data class ImageData(val name: String, val fotopath: String)
+
     private fun carregarTracks(radioButton1: Button, radioButton2: Button, radioButton3: Button) {
         myRef = database.getReference("tracks")
         myRef.addValueEventListener(object : ValueEventListener {
@@ -91,11 +90,8 @@ class RoutesListActivity : AppCompatActivity() {
                     }
                     // Atualizar botões com os tracks
                     radioButton1.text = tracks.getOrNull(0) ?: "Track 1 não disponível"
-                    trackformaps.name = tracks.getOrNull(0) ?: "Track 1 não disponível"
                     radioButton2.text = tracks.getOrNull(1) ?: "Track 2 não disponível"
-                    trackformaps.name = tracks.getOrNull(1) ?: "Track 1 não disponível"
                     radioButton3.text = tracks.getOrNull(2) ?: "Track 3 não disponível"
-                    trackformaps.name = tracks.getOrNull(2) ?: "Track 1 não disponível"
                 } else {
                     radioButton1.text = "Nenhuma track encontrada"
                     radioButton2.text = "Nenhuma track encontrada"
@@ -119,21 +115,25 @@ class RoutesListActivity : AppCompatActivity() {
                     imageList.clear()
                     for (referenceSnapshot in dataSnapshot.children) {
                         val name = referenceSnapshot.child("name").getValue(String::class.java) ?: "Sem Nome"
-                        var fotopath = referenceSnapshot.child("fotoPath").getValue(String::class.java) ?: "Sem fotoPath"
+                        var fotopath = referenceSnapshot.child("fotoPath").getValue(String::class.java) ?: ""
 
-                        // Verificar se fotopath é "NULL" ou vazio e definir um valor padrão
-                        if (fotopath == "NULL" || fotopath.isEmpty()) {
-                            fotopath = "https://static.vecteezy.com/ti/fotos-gratis/t1/22653879-fantasia-ilha-com-cachoeiras-3d-ilustracao-elementos-do-isto-imagem-mobiliado-de-nasa-generativo-ai-gratis-foto.jpg" // Substitua por uma URL de imagem padrão
+                        // Verificar se fotopath é vazio e definir um valor padrão
+                        if (fotopath.isEmpty()) {
+                            fotopath = "https://static.vecteezy.com/ti/fotos-gratis/t1/22653879-fantasia-ilha-com-cachoeiras-3d-ilustracao-elementos-do-isto-imagem-mobiliado-de-nasa-generativo-ai-gratis-foto.jpg"
                         }
 
                         imageList.add(ImageData(name, fotopath))
+
+                        // Log para verificar os dados carregados
+                        println("Imagem carregada: $name, URL: $fotopath")
                     }
+                } else {
+                    println("Nenhum dado encontrado em 'referencePoints'.")
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-
-
+                println("Erro ao carregar imagens: ${error.message}")
             }
         })
     }
@@ -143,26 +143,28 @@ class RoutesListActivity : AppCompatActivity() {
         radioButton2: Button,
         radioButton3: Button,
         routeButton: Button,
-        imageView: ImageView
+        imageView: ImageView,
+        logText: TextView
     ) {
         radioButton1.setOnClickListener {
             trackformaps.id = 1
             val imageUrl = imageList.getOrNull(0)?.fotopath ?: ""
+            logText.text = imageUrl
             exibirImagem(imageUrl, routeButton, imageView)
         }
 
         radioButton2.setOnClickListener {
             trackformaps.id = 2
             val imageUrl = imageList.getOrNull(1)?.fotopath ?: ""
+            logText.text = imageUrl
             exibirImagem(imageUrl, routeButton, imageView)
-
         }
 
         radioButton3.setOnClickListener {
             trackformaps.id = 3
             val imageUrl = imageList.getOrNull(0)?.fotopath ?: ""
+            logText.text = imageUrl
             exibirImagem(imageUrl, routeButton, imageView)
-
         }
     }
 
@@ -172,6 +174,4 @@ class RoutesListActivity : AppCompatActivity() {
             .load(imageUrl)
             .into(imageView)
     }
-
-
 }
