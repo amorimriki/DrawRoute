@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.bumptech.glide.disklrucache.DiskLruCache.Value
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -22,7 +23,7 @@ class RoutesListActivity : AppCompatActivity() {
     private val imageList = mutableListOf<ImageData>()
 
     object trackformaps {
-        var name: String = ""
+        var name = mutableListOf<String>()
         var id: Int = 0
     }
 
@@ -91,11 +92,11 @@ class RoutesListActivity : AppCompatActivity() {
                     }
                     // Atualizar botões com os tracks
                     radioButton1.text = tracks.getOrNull(0) ?: "Track 1 não disponível"
-                    trackformaps.name = tracks.getOrNull(0) ?: "Track 1 não disponível"
+                    trackformaps.name.add(tracks.getOrNull(0) ?: "Track 1 não disponível")
                     radioButton2.text = tracks.getOrNull(1) ?: "Track 2 não disponível"
-                    trackformaps.name = tracks.getOrNull(1) ?: "Track 2 não disponível"
+                    trackformaps.name.add(tracks.getOrNull(1) ?: "Track 2 não disponível")
                     radioButton3.text = tracks.getOrNull(2) ?: "Track 3 não disponível"
-                    trackformaps.name = tracks.getOrNull(2) ?: "Track 3 não disponível"
+                    trackformaps.name.add(tracks.getOrNull(2) ?: "Track 3 não disponível")
 
                 } else {
                     radioButton1.text = "Nenhuma track encontrada"
@@ -153,21 +154,21 @@ class RoutesListActivity : AppCompatActivity() {
     ) {
         radioButton1.setOnClickListener {
             trackformaps.id = 1
-            val imageUrl = imageList.getOrNull(0)?.fotopath ?: ""
+            val imageUrl = imageList.getOrNull(1)?.fotopath ?: ""
             logText.text = imageUrl
             exibirImagem(imageUrl, routeButton, imageView)
         }
 
         radioButton2.setOnClickListener {
-            trackformaps.id = 2
-            val imageUrl = imageList.getOrNull(1)?.fotopath ?: ""
+            trackformaps.id =2
+            val imageUrl = imageList.getOrNull(0)?.fotopath ?: ""
             logText.text = imageUrl
             exibirImagem(imageUrl, routeButton, imageView)
         }
 
         radioButton3.setOnClickListener {
             trackformaps.id = 3
-            val imageUrl = imageList.getOrNull(0)?.fotopath ?: ""
+            val imageUrl = imageList.getOrNull(1)?.fotopath ?: ""
             logText.text = imageUrl
             exibirImagem(imageUrl, routeButton, imageView)
         }
