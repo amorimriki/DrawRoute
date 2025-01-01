@@ -1,33 +1,25 @@
 package com.example.drawroute
 
-import com.example.drawroute.RoutesListActivity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.collection.ObjectList
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import com.example.drawroute.MapActivity.Point.getTrack
-import com.example.drawroute.RoutesListActivity.ImageData
-import com.example.drawroute.RoutesListActivity.trackformaps
 import com.example.drawroute.place.Place
 import com.example.drawroute.place.PlacesReader
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.*
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.ktx.addCircle
 import com.google.maps.android.ktx.addMarker
 import com.google.maps.android.ktx.awaitMap
 import com.google.maps.android.ktx.awaitMapLoad
-import org.json.JSONObject
 import kotlinx.coroutines.launch
-import com.google.firebase.FirebaseApp
-import com.google.firebase.database.*
 
 class MapActivity : AppCompatActivity() {
 
@@ -37,24 +29,27 @@ class MapActivity : AppCompatActivity() {
     private lateinit var database: FirebaseDatabase
     private lateinit var myRef: DatabaseReference
 
+    private var tracks = mutableMapOf<Int, MutableList<LatLng>>()
 
-    // [START maps_android_add_map_codelab_ktx_coroutines]
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
+
         val buttonMenu = findViewById<Button>(R.id.buttonMenu)
         val routeName = findViewById<TextView>(R.id.routeName)
-        routeName.text = RoutesListActivity.trackformaps.name[RoutesListActivity.trackformaps.id]
+        routeName.text = RoutesListActivity.trackformaps.name.getOrNull(RoutesListActivity.trackformaps.id - 1) ?: "Sem Nome"
+
         val mapFragment =
             supportFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
-        lifecycleScope.launchWhenCreated {
-            // Get map
+
+        database = FirebaseDatabase.getInstance("https://drawr-840b8-default-rtdb.europe-west1.firebasedatabase.app/")
+
+        lifecycleScope.launch {
             val googleMap = mapFragment.awaitMap()
-            addClusteredMarkers(googleMap)
             googleMap.awaitMapLoad()
-
-            database = FirebaseDatabase.getInstance("https://drawr-840b8-default-rtdb.europe-west1.firebasedatabase.app/")
-
+            extractPointsFromDatabase { points ->
+                processTracksAndAddPolylines(googleMap, points)
+            }
         }
 
         buttonMenu.setOnClickListener {
@@ -63,13 +58,55 @@ class MapActivity : AppCompatActivity() {
             finish()
         }
     }
-    // [END maps_android_add_map_codelab_ktx_coroutines]
 
-    /**
-     * Adds markers to the map with clustering support.
-     */
+    private fun extractPointsFromDatabase(callback: (Map<Int, MutableList<LatLng>>) -> Unit) {
+        myRef = database.getReference("points")
+        myRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val extractedTracks = mutableMapOf<Int, MutableList<LatLng>>()
+                if (dataSnapshot.exists()) {
+                    for (referenceSnapshot in dataSnapshot.children) {
+                        val latitude = referenceSnapshot.child("latitude").getValue(Double::class.java) ?: continue
+                        val longitude = referenceSnapshot.child("longitude").getValue(Double::class.java) ?: continue
+                        val trackId = referenceSnapshot.child("track").getValue(Int::class.java) ?: continue
+
+                        val latLng = LatLng(latitude, longitude)
+                        extractedTracks.putIfAbsent(trackId, mutableListOf())
+                        extractedTracks[trackId]?.add(latLng)
+                    }
+                }
+                callback(extractedTracks)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                println("Erro ao carregar os dados: ${error.message}")
+                callback(emptyMap())
+            }
+        })
+    }
+
+    private fun processTracksAndAddPolylines(googleMap: GoogleMap, points: Map<Int, MutableList<LatLng>>) {
+        tracks.clear()
+        tracks.putAll(points)
+
+        val trackID = RoutesListActivity.trackformaps.id
+        val trackPoints = tracks[trackID]
+
+        if (!trackPoints.isNullOrEmpty()) {
+            val polylineOptions = PolylineOptions()
+                .addAll(trackPoints)
+                .width(10f)
+                .color(ContextCompat.getColor(this, R.color.colorPrimary))
+                .geodesic(true)
+
+            googleMap.addPolyline(polylineOptions)
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(trackPoints.first(), 15f))
+        } else {
+            println("Track ID $trackID não encontrado ou não possui pontos!")
+        }
+    }
+
     private fun addClusteredMarkers(googleMap: GoogleMap) {
-        // Create the ClusterManager class and set the custom renderer
         val clusterManager = ClusterManager<Place>(this, googleMap)
         clusterManager.renderer =
             PlaceRenderer(
@@ -78,42 +115,30 @@ class MapActivity : AppCompatActivity() {
                 clusterManager
             )
 
-        // Set custom info window adapter
         clusterManager.markerCollection.setInfoWindowAdapter(MarkerInfoWindowAdapter(this))
 
-        // Add the places to the ClusterManager
         clusterManager.addItems(places)
         clusterManager.cluster()
 
-        // Show polygon
         clusterManager.setOnClusterItemClickListener { item ->
             addCircle(googleMap, item)
             return@setOnClusterItemClickListener false
         }
 
-        // When the camera starts moving, change the alpha value of the marker to translucent
         googleMap.setOnCameraMoveStartedListener {
             clusterManager.markerCollection.markers.forEach { it.alpha = 0.3f }
             clusterManager.clusterMarkerCollection.markers.forEach { it.alpha = 0.3f }
         }
 
         googleMap.setOnCameraIdleListener {
-            // When the camera stops moving, change the alpha value back to opaque
             clusterManager.markerCollection.markers.forEach { it.alpha = 1.0f }
             clusterManager.clusterMarkerCollection.markers.forEach { it.alpha = 1.0f }
-
-            // Call clusterManager.onCameraIdle() when the camera stops moving so that re-clustering
-            // can be performed when the camera stops moving
             clusterManager.onCameraIdle()
         }
     }
 
     private var circle: Circle? = null
 
-    // [START maps_android_add_map_codelab_ktx_add_circle]
-    /**
-     * Adds a [Circle] around the provided [item]
-     */
     private fun addCircle(googleMap: GoogleMap, item: Place) {
         circle?.remove()
         circle = googleMap.addCircle {
@@ -123,165 +148,8 @@ class MapActivity : AppCompatActivity() {
             strokeColor(ContextCompat.getColor(this@MapActivity, R.color.colorPrimary))
         }
     }
-    // [END maps_android_add_map_codelab_ktx_add_circle]
-
-    private val bicycleIcon: BitmapDescriptor by lazy {
-        val color = ContextCompat.getColor(this, R.color.colorPrimary)
-        BitmapHelper.vectorToBitmap(this, R.drawable.ic_map_pin_24dp, color)
-    }
-
-    // [START maps_android_add_map_codelab_ktx_add_markers]
-    /**
-     * Adds markers to the map. These markers won't be clustered.
-     */
-    private fun addMarkers(googleMap: GoogleMap) {
-        places.forEach { place ->
-            val marker = googleMap.addMarker {
-                title(place.name)
-                position(place.latLng)
-                icon(bicycleIcon)
-            }
-            // Set place as the tag on the marker object so it can be referenced within
-            // MarkerInfoWindowAdapter
-            marker?.tag = place
-        }
-    }
-    // [END maps_android_add_map_codelab_ktx_add_markers]
-    object Point {
-        var latitude: String = ""
-        var longitude: String = ""
-        var track: String = ""
-        val points: MutableList<LatLng> = mutableListOf()
-
-        fun getTrack(): MutableList<LatLng> {
-            return points
-        }
-    }
-
-    private fun extractPointsFromDatabase(): MutableList<LatLng> {
-        myRef = database.getReference("points")
-        myRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val tracks = mutableMapOf<Int, MutableList<LatLng>>()
-                if (dataSnapshot.exists()) {
-                    for (referenceSnapshot in dataSnapshot.children) {
-                        val latitude = referenceSnapshot.child("latitude").getValue(String::class.java) ?: "0.0"
-                        val longitude = referenceSnapshot.child("longitude").getValue(String::class.java) ?: "0.0"
-                        val trackId = referenceSnapshot.child("track").getValue(String::class.java)?.toIntOrNull() ?: -1
-
-                        if (trackId != -1) {
-                            val lat = latitude.toDoubleOrNull()
-                            val lng = longitude.toDoubleOrNull()
-
-                            if (lat != null && lng != null) {
-                                val latLng = LatLng(lat, lng)
-                                tracks.putIfAbsent(trackId, mutableListOf())
-                                tracks[trackId]?.add(latLng)
-                            }
-                        }
-                    }
-                    println("Tracks carregadas com sucesso: $tracks")
-                } else {
-                    println("Nenhum dado encontrado em 'points'.")
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                println("Erro ao carregar os dados: ${error.message}")
-            }
-        })
-
-
-       /* val tracks = mutableMapOf<Int, MutableList<LatLng>>()
-
-        // Parse o JSON fornecido
-        val jsonObject = JSONObject(jsonString)
-        val pointsArray = jsonObject.getJSONArray("points")
-
-        // Itera pelos pontos na base de dados
-        for (i in 0 until pointsArray.length()) {
-            val point = pointsArray.optJSONObject(i) ?: continue
-            val trackId = point.optInt("track", -1)
-            val latitude = point.optDouble("latitude", Double.NaN)
-            val longitude = point.optDouble("longitude", Double.NaN)
-
-            if (!latitude.isNaN() && !longitude.isNaN() && trackId != -1) {
-                val latLng = LatLng(latitude, longitude)
-                tracks.putIfAbsent(trackId, mutableListOf())
-                tracks[trackId]?.add(latLng)
-            }
-        }*/
-
-        return getTrack()
-    }
-
-
-    private fun extractReferencePointsFromDatabase(jsonString: String): List<Place> {
-        val referencePoints = mutableListOf<Place>()
-        val jsonObject = JSONObject(jsonString)
-        val referenceArray = jsonObject.optJSONArray("referencePoints") ?: return emptyList()
-
-        for (i in 0 until referenceArray.length()) {
-            val refPoint = referenceArray.optJSONObject(i) ?: continue
-            val name = refPoint.optString("name", "Sem Nome")
-            val latitude = refPoint.optDouble("latitude", Double.NaN)
-            val longitude = refPoint.optDouble("longitude", Double.NaN)
-
-            if (!latitude.isNaN() && !longitude.isNaN()) {
-                referencePoints.add(Place(name, LatLng(latitude, longitude), ""))
-            }
-        }
-
-        return referencePoints
-    }
-
-   /* private fun loadDatabaseJson(): String {
-        return assets.open("drawr-840b8-default-rtdb-export.json").bufferedReader().use { it.readText() }
-    }*/
-
-    private fun processTracksAndAddPolylines(googleMap: GoogleMap, tracks: Map<Int, List<LatLng>>) {
-        /*val colors = listOf(
-            R.color.red_line,
-            R.color.green_line,
-            R.color.blue_line,
-            R.color.colorPrimary,
-            R.color.yellow_line
-        )*/
-
-        val trackID = RoutesListActivity.trackformaps.id// Obtém o ID da rota selecionada
-
-        // Verifica se a rota com o trackID existe nos dados carregados
-        val points = tracks[trackID]
-
-        if (points != null && points.isNotEmpty()) {
-            // Configura as opções da polilinha
-            val polylineOptions = PolylineOptions()
-                .addAll(points)
-                .width(10f) // Espessura da linha
-                .color(ContextCompat.getColor(this, R.color.colorPrimary))
-                .geodesic(true)
-
-            // Adiciona a polilinha no mapa
-            googleMap.addPolyline(polylineOptions)
-        } else {
-            // Log ou mensagem de erro caso o trackID não seja encontrado
-            println("Track ID $trackID não encontrado ou não possui pontos!")
-        }
-    }
-
-    private fun addReferenceMarkers(googleMap: GoogleMap, referencePoints: List<Place>) {
-        referencePoints.forEach { place ->
-            googleMap.addMarker {
-                position(place.latLng)
-                title(place.name)
-                icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
-            }
-        }
-    }
 
     companion object {
         val TAG = MapActivity::class.java.simpleName
     }
-
-
 }
