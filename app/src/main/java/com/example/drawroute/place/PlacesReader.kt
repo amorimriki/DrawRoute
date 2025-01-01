@@ -1,32 +1,36 @@
 package com.example.drawroute.place
-import android.content.Context
-import com.example.drawroute.R
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import java.io.InputStream
-import java.io.InputStreamReader
 
-/**
- * Reads a list of place JSON objects from the file places.json.
- */
+import android.content.Context
+import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.database.*
+
 class PlacesReader(private val context: Context) {
 
-    // GSON object responsible for converting from JSON to a Place object
-    private val gson = Gson()
+    private val database: FirebaseDatabase = FirebaseDatabase.getInstance("https://drawr-840b8-default-rtdb.europe-west1.firebasedatabase.app/")
+    private val myRef: DatabaseReference = database.getReference("referencePoints")
 
-    // InputStream representing places.json
-    private val inputStream: InputStream
-        get() = context.resources.openRawResource(R.raw.places)
+    fun read(callback: (List<Place>) -> Unit) {
+        myRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val places = mutableListOf<Place>()
+                if (dataSnapshot.exists()) {
+                    for (referenceSnapshot in dataSnapshot.children) {
+                        val name = referenceSnapshot.child("name").getValue(String::class.java) ?: continue
+                        val latitude = referenceSnapshot.child("latitude").getValue(Double::class.java) ?: continue
+                        val longitude = referenceSnapshot.child("longitude").getValue(Double::class.java) ?: continue
+                        val address = referenceSnapshot.child("vicinity").getValue(String::class.java) ?: continue
 
-    /**
-     * Reads the list of place JSON objects in the file places.json and returns a list of Place
-     * objects
-     */
-    fun read(): List<Place> {
-        val itemType = object : TypeToken<List<PlaceResponse>>() {}.type
-        val reader = InputStreamReader(inputStream)
-        return gson.fromJson<List<PlaceResponse>>(reader, itemType).map {
-            it.toPlace()
-        }
+                        val latLng = LatLng(latitude, longitude)
+                        places.add(Place(name, latLng, address))
+                    }
+                }
+                callback(places)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                println("Erro ao carregar dados: ${error.message}")
+                callback(emptyList())
+            }
+        })
     }
 }

@@ -1,8 +1,9 @@
-package com.example.drawroute
+package com.example.drawroute.place
 
-import com.example.drawroute.place.Place
 import android.content.Context
 import androidx.core.content.ContextCompat
+import com.example.drawroute.BitmapHelper
+import com.example.drawroute.R
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.Marker
@@ -22,7 +23,7 @@ class PlaceRenderer(
     /**
      * The icon to use for each cluster item
      */
-    private val bicycleIcon: BitmapDescriptor by lazy {
+    private val icon: BitmapDescriptor by lazy {
         val color = ContextCompat.getColor(context,
             R.color.colorPrimary
         )
@@ -33,20 +34,12 @@ class PlaceRenderer(
         )
     }
 
-    /**
-     * Method called before the cluster item (i.e. the marker) is rendered. This is where marker
-     * options should be set
-     */
     override fun onBeforeClusterItemRendered(item: Place, markerOptions: MarkerOptions) {
         markerOptions.title(item.name)
             .position(item.latLng)
-            .icon(bicycleIcon)
+            .icon(icon)
     }
 
-    /**
-     * Method called right after the cluster item (i.e. the marker) is rendered. This is where
-     * properties for the Marker object should be set.
-     */
     override fun onClusterItemRendered(clusterItem: Place, marker: Marker) {
         marker.tag = clusterItem
     }

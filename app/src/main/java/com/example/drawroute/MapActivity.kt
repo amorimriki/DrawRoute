@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.drawroute.place.Place
+import com.example.drawroute.place.PlaceRenderer
 import com.example.drawroute.place.PlacesReader
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -16,16 +17,12 @@ import com.google.android.gms.maps.model.*
 import com.google.firebase.database.*
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.ktx.addCircle
-import com.google.maps.android.ktx.addMarker
 import com.google.maps.android.ktx.awaitMap
 import com.google.maps.android.ktx.awaitMapLoad
 import kotlinx.coroutines.launch
 
 class MapActivity : AppCompatActivity() {
 
-    private val places: List<Place> by lazy {
-        PlacesReader(this).read()
-    }
     private lateinit var database: FirebaseDatabase
     private lateinit var myRef: DatabaseReference
 
@@ -46,7 +43,11 @@ class MapActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             val googleMap = mapFragment.awaitMap()
+            googleMap.uiSettings.isZoomControlsEnabled = true
+            googleMap.isIndoorEnabled = false
+            googleMap.isTrafficEnabled = false
             googleMap.awaitMapLoad()
+            addClusteredMarkers(googleMap)
             extractPointsFromDatabase { points ->
                 processTracksAndAddPolylines(googleMap, points)
             }
@@ -93,20 +94,65 @@ class MapActivity : AppCompatActivity() {
         val trackPoints = tracks[trackID]
 
         if (!trackPoints.isNullOrEmpty()) {
-            val polylineOptions = PolylineOptions()
+            /*val polylineOptions = PolylineOptions()
                 .addAll(trackPoints)
                 .width(10f)
                 .color(ContextCompat.getColor(this, R.color.colorPrimary))
                 .geodesic(true)
+            googleMap.addPolyline(polylineOptions)*/
 
-            googleMap.addPolyline(polylineOptions)
+            for (trackSegment in trackPoints.windowed(2, 1, false)) {
+                googleMap.addPolyline(
+                    PolylineOptions()
+                        .addAll(trackSegment)
+                        .width(10f)
+                        .color(ContextCompat.getColor(this, R.color.colorPrimary))
+                        .geodesic(true)
+                )}
+            println("Track ID: $trackID")
+            trackPoints.forEachIndexed { index, point ->
+                println("Ponto $index: Lat=${point.latitude}, Lng=${point.longitude}")
+
+            }
+
+
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(trackPoints.first(), 15f))
         } else {
             println("Track ID $trackID não encontrado ou não possui pontos!")
         }
     }
 
+
     private fun addClusteredMarkers(googleMap: GoogleMap) {
+        val clusterManager = ClusterManager<Place>(this, googleMap)
+        clusterManager.renderer = PlaceRenderer(this, googleMap, clusterManager)
+
+        clusterManager.markerCollection.setInfoWindowAdapter(MarkerInfoWindowAdapter(this))
+
+        // Busca os dados da Firebase e adiciona ao cluster
+        PlacesReader(this).read { places ->
+            clusterManager.addItems(places)
+            clusterManager.cluster()
+
+            clusterManager.setOnClusterItemClickListener { item ->
+                addCircle(googleMap, item)
+                return@setOnClusterItemClickListener false
+            }
+
+            googleMap.setOnCameraMoveStartedListener {
+                clusterManager.markerCollection.markers.forEach { it.alpha = 0.3f }
+                clusterManager.clusterMarkerCollection.markers.forEach { it.alpha = 0.3f }
+            }
+
+            googleMap.setOnCameraIdleListener {
+                clusterManager.markerCollection.markers.forEach { it.alpha = 1.0f }
+                clusterManager.clusterMarkerCollection.markers.forEach { it.alpha = 1.0f }
+                clusterManager.onCameraIdle()
+            }
+        }
+    }
+
+   /* private fun addClusteredMarkers(googleMap: GoogleMap) {
         val clusterManager = ClusterManager<Place>(this, googleMap)
         clusterManager.renderer =
             PlaceRenderer(
@@ -117,7 +163,7 @@ class MapActivity : AppCompatActivity() {
 
         clusterManager.markerCollection.setInfoWindowAdapter(MarkerInfoWindowAdapter(this))
 
-        clusterManager.addItems(places)
+//        clusterManager.addItems(places)
         clusterManager.cluster()
 
         clusterManager.setOnClusterItemClickListener { item ->
@@ -135,7 +181,7 @@ class MapActivity : AppCompatActivity() {
             clusterManager.clusterMarkerCollection.markers.forEach { it.alpha = 1.0f }
             clusterManager.onCameraIdle()
         }
-    }
+    }*/
 
     private var circle: Circle? = null
 
