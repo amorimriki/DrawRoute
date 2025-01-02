@@ -33,7 +33,7 @@ class AuthActivity : AppCompatActivity() {
         val fastLoginButton = findViewById<Button>(R.id.buttonFastLogin)
 
         fastLoginButton.setOnClickListener {
-            val email = "amorimriki@gmail.com"
+            val email = "a22007546@alunos.ulht.pt"
             val password = "123456"
             loginUser(email, password)
         }

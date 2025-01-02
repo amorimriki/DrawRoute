@@ -46,6 +46,43 @@ class RoutesListActivity : AppCompatActivity() {
         val imageView = findViewById<ImageView>(R.id.imageView)
         val logText = findViewById<TextView>(R.id.textViewLog)
         logText.visibility = View.INVISIBLE
+        val welText = findViewById<TextView>(R.id.TextViewWelcome)
+        val userAuth = auth.currentUser
+        data class User(val name: String, val email: String)
+        myRef = database.getReference("users")
+        myRef.addValueEventListener(object : ValueEventListener {
+
+            // Método para processar os dados
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    val users = mutableListOf<User>()  // Lista de utilizadores
+                    for (trackSnapshot in dataSnapshot.children) {
+                        val name =
+                            trackSnapshot.child("name").getValue(String::class.java) ?: "Sem Nome"
+                        val email =
+                            trackSnapshot.child("email").getValue(String::class.java) ?: "Sem email"
+                        users.add(User(name, email))  // Adiciona o utilizador à lista
+                    }
+
+                    // Verificar se o email do utilizador logado está na lista
+                    val loggedInUser = users.find { it.email == userAuth?.email }
+
+                    if (loggedInUser != null) {
+                        welText.text = "Bem vindo,\n ${loggedInUser.name}"
+                    } else {
+                        welText.text = "Utilizador não encontrado!"
+                    }
+                } else {
+                    welText.text = "Nenhum dado encontrado."
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                println("Erro ao carregar os dados: ${error.message}")
+                welText.text = "ERROR"
+            }
+        })
+
 
         val defaultImageUrl = "https://webcolours.ca/wp-content/uploads/2020/10/webcolours-unknown.png"
 
