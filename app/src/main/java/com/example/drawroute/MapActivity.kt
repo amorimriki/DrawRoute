@@ -35,7 +35,6 @@ class MapActivity : AppCompatActivity() {
         val buttonMenu = findViewById<Button>(R.id.buttonMenu)
         val routeName = findViewById<TextView>(R.id.routeName)
         routeName.text = RoutesListActivity.trackformaps.name.getOrNull(RoutesListActivity.trackformaps.id - 1) ?: "Sem Nome"
-
         val mapFragment =
             supportFragmentManager.findFragmentById(R.id.map_fragment) as SupportMapFragment
 

@@ -25,6 +25,7 @@ class RoutesListActivity : AppCompatActivity() {
     object trackformaps {
         var name = mutableListOf<String>()
         var id: Int = 0
+        var referencePoint = mutableListOf<String>()
     }
 
     @SuppressLint("MissingInflatedId")
@@ -122,10 +123,16 @@ class RoutesListActivity : AppCompatActivity() {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
                     val tracks = mutableListOf<String>()
+
                     for (trackSnapshot in dataSnapshot.children) {
                         val name = trackSnapshot.child("name").getValue(String::class.java) ?: "Sem Nome"
                         val timestamp = trackSnapshot.child("timestamp").getValue(String::class.java) ?: "Sem Timestamp"
+                        val referencePoint_base
+                                = trackSnapshot.child("id_referencePoint_base").getValue(String::class.java) ?: "Sem Reference Point"
+                        trackformaps.referencePoint.add(referencePoint_base)
+                        println (referencePoint_base)
                         tracks.add("$name - $timestamp")
+
                     }
                     // Atualizar botões com os tracks
                     radioButton1.text = tracks.getOrNull(0) ?: "Track 1 não disponível"

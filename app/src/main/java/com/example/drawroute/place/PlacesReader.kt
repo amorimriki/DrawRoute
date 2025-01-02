@@ -1,6 +1,8 @@
 package com.example.drawroute.place
 
 import android.content.Context
+import android.util.Log
+import com.example.drawroute.RoutesListActivity
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.database.*
 
@@ -10,11 +12,21 @@ class PlacesReader(private val context: Context) {
     private val myRef: DatabaseReference = database.getReference("referencePoints")
 
     fun read(callback: (List<Place>) -> Unit) {
+        val refpoints = RoutesListActivity.trackformaps.referencePoint.getOrNull(RoutesListActivity.trackformaps.id -1)
+            ?: run {
+                Log.e("PlacesReader", "No reference points found")
+                callback(emptyList())
+                return
+            }
+
         myRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val places = mutableListOf<Place>()
-                if (dataSnapshot.exists()) {
-                    for (referenceSnapshot in dataSnapshot.children) {
+
+                for (referenceSnapshot in dataSnapshot.children) {
+                    val key = referenceSnapshot.key ?: continue
+                    println("Key: "+"$key "+ "refpoints: "+ "$refpoints")
+                    if (refpoints.contains(key)) {
                         val name = referenceSnapshot.child("name").getValue(String::class.java) ?: continue
                         val latitude = referenceSnapshot.child("latitude").getValue(Double::class.java) ?: continue
                         val longitude = referenceSnapshot.child("longitude").getValue(Double::class.java) ?: continue
@@ -24,11 +36,13 @@ class PlacesReader(private val context: Context) {
                         places.add(Place(name, latLng, address))
                     }
                 }
+
+                Log.d("PlacesReader", "Fetched ${places.size} places")
                 callback(places)
             }
 
             override fun onCancelled(error: DatabaseError) {
-                println("Erro ao carregar dados: ${error.message}")
+                Log.e("PlacesReader", "Error loading data: ${error.message}")
                 callback(emptyList())
             }
         })
