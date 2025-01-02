@@ -86,7 +86,10 @@ class MapActivity : AppCompatActivity() {
         })
     }
 
-    private fun processTracksAndAddPolylines(googleMap: GoogleMap, points: Map<Int, MutableList<LatLng>>) {
+    private fun processTracksAndAddPolylines(
+        googleMap: GoogleMap,
+        points: Map<Int, MutableList<LatLng>>
+    ) {
         tracks.clear()
         tracks.putAll(points)
 
@@ -94,33 +97,31 @@ class MapActivity : AppCompatActivity() {
         val trackPoints = tracks[trackID]
 
         if (!trackPoints.isNullOrEmpty()) {
-            /*val polylineOptions = PolylineOptions()
-                .addAll(trackPoints)
-                .width(10f)
-                .color(ContextCompat.getColor(this, R.color.colorPrimary))
-                .geodesic(true)
-            googleMap.addPolyline(polylineOptions)*/
 
-            for (trackSegment in trackPoints.windowed(2, 1, false)) {
+
+            for (i in 0 until trackPoints.size -1) {
+                if (i == trackPoints.lastIndex -3) {
+                    break
+                }
                 googleMap.addPolyline(
                     PolylineOptions()
-                        .addAll(trackSegment)
+                        .add(trackPoints[i], trackPoints[i + 1])
                         .width(10f)
                         .color(ContextCompat.getColor(this, R.color.colorPrimary))
                         .geodesic(true)
-                )}
-            println("Track ID: $trackID")
-            trackPoints.forEachIndexed { index, point ->
-                println("Ponto $index: Lat=${point.latitude}, Lng=${point.longitude}")
-
+                )
             }
 
 
+
+
+            // Mover a câmera para o primeiro ponto
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(trackPoints.first(), 15f))
         } else {
             println("Track ID $trackID não encontrado ou não possui pontos!")
         }
     }
+
 
 
     private fun addClusteredMarkers(googleMap: GoogleMap) {
