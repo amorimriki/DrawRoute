@@ -99,7 +99,7 @@ class MapActivity : AppCompatActivity() {
         if (!trackPoints.isNullOrEmpty()) {
 
 
-            for (i in 0 until trackPoints.size -1) {
+            for (i in 0 until trackPoints.lastIndex) {
                 if (i == trackPoints.lastIndex -3) {
                     break
                 }
@@ -111,9 +111,6 @@ class MapActivity : AppCompatActivity() {
                         .geodesic(true)
                 )
             }
-
-
-
 
             // Mover a câmera para o primeiro ponto
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(trackPoints.first(), 15f))
@@ -152,37 +149,6 @@ class MapActivity : AppCompatActivity() {
             }
         }
     }
-
-   /* private fun addClusteredMarkers(googleMap: GoogleMap) {
-        val clusterManager = ClusterManager<Place>(this, googleMap)
-        clusterManager.renderer =
-            PlaceRenderer(
-                this,
-                googleMap,
-                clusterManager
-            )
-
-        clusterManager.markerCollection.setInfoWindowAdapter(MarkerInfoWindowAdapter(this))
-
-//        clusterManager.addItems(places)
-        clusterManager.cluster()
-
-        clusterManager.setOnClusterItemClickListener { item ->
-            addCircle(googleMap, item)
-            return@setOnClusterItemClickListener false
-        }
-
-        googleMap.setOnCameraMoveStartedListener {
-            clusterManager.markerCollection.markers.forEach { it.alpha = 0.3f }
-            clusterManager.clusterMarkerCollection.markers.forEach { it.alpha = 0.3f }
-        }
-
-        googleMap.setOnCameraIdleListener {
-            clusterManager.markerCollection.markers.forEach { it.alpha = 1.0f }
-            clusterManager.clusterMarkerCollection.markers.forEach { it.alpha = 1.0f }
-            clusterManager.onCameraIdle()
-        }
-    }*/
 
     private var circle: Circle? = null
 
